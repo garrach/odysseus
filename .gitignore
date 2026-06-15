@@ -45,6 +45,7 @@ services/data/
 # OS
 .DS_Store
 Thumbs.db
+nul
 
 # Build artifacts
 *.cache
