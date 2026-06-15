@@ -14,13 +14,19 @@ import sys
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 from src.constants import (
-    DATA_DIR, AUTH_FILE, UPLOAD_DIR, PERSONAL_DIR, PERSONAL_UPLOADS_DIR,
-    TTS_CACHE_DIR, GENERATED_IMAGES_DIR, DEEP_RESEARCH_DIR, CHROMA_DIR,
-    RAG_DIR, MEMORY_VECTORS_DIR,
+    DATA_DIR,
+    AUTH_FILE,
+    UPLOAD_DIR,
+    PERSONAL_DIR,
+    PERSONAL_UPLOADS_DIR,
+    TTS_CACHE_DIR,
+    GENERATED_IMAGES_DIR,
+    DEEP_RESEARCH_DIR,
+    CHROMA_DIR,
+    RAG_DIR,
+    MEMORY_VECTORS_DIR,
 )
 
-print(BASE_DIR)
-print(DATA_DIR)
 DIRS = [
     DATA_DIR,
     UPLOAD_DIR,
@@ -45,9 +51,12 @@ def create_dirs():
 def init_database():
     """Create all SQLAlchemy tables."""
     sys.path.insert(0, BASE_DIR)
-    os.environ.setdefault("DATABASE_URL", f"sqlite:///{os.path.join(DATA_DIR, 'app.db')}")
+    os.environ.setdefault(
+        "DATABASE_URL", f"sqlite:///{os.path.join(DATA_DIR, 'app.db')}"
+    )
 
     from core.database import Base, engine
+
     Base.metadata.create_all(bind=engine)
     print("  [ok] Database initialized")
 
@@ -124,7 +133,9 @@ def create_default_admin():
             print(f"  [ok] Initial admin user created ({username})")
             if not os.getenv("ODYSSEUS_ADMIN_PASSWORD"):
                 print(f"        Temporary password: {password}")
-                print(f"        ** Change it after first login. Set ODYSSEUS_ADMIN_PASSWORD to choose your own. **")
+                print(
+                    f"        ** Change it after first login. Set ODYSSEUS_ADMIN_PASSWORD to choose your own. **"
+                )
         return "created"
     except ImportError as e:
         if "incompatible architecture" in str(e).lower():
@@ -133,7 +144,9 @@ def create_default_admin():
             # for the rarer case of an x86 wheel inside an arm64 venv.
             print("  [error] bcrypt loaded with the wrong CPU architecture.")
             print("          Rebuild the venv with an arm64 Python:")
-            print("            rm -rf venv && /opt/homebrew/bin/python3.11 -m venv venv")
+            print(
+                "            rm -rf venv && /opt/homebrew/bin/python3.11 -m venv venv"
+            )
             print("            ./venv/bin/pip install -r requirements.txt")
             return "skipped"
         print("  [warn] bcrypt not installed — skipping admin user creation")
@@ -150,6 +163,7 @@ def create_env():
         return
     if os.path.exists(example_path):
         import shutil
+
         shutil.copy2(example_path, env_path)
         print("  [ok] .env created from .env.example")
         print("        ** Edit .env with your LLM host and API keys **")
@@ -203,7 +217,9 @@ def check_arch():
     try:
         translated = subprocess.run(
             ["sysctl", "-n", "sysctl.proc_translated"],
-            capture_output=True, text=True, timeout=5,
+            capture_output=True,
+            text=True,
+            timeout=5,
         ).stdout.strip()
     except Exception:
         translated = ""
@@ -271,11 +287,17 @@ def main():
     elif admin_status == "exists":
         print("Login with your existing admin credentials.\n")
     elif admin_status == "skipped":
-        print("Admin creation did not happen: dependencies are missing.\nRun 'pip install bcrypt' and rerun setup.\n")
+        print(
+            "Admin creation did not happen: dependencies are missing.\nRun 'pip install bcrypt' and rerun setup.\n"
+        )
     elif admin_status == "failed":
-        print("Admin creation did not happen: a system or file error occurred.\nCheck write permissions for the 'data' directory and rerun setup.\n")
+        print(
+            "Admin creation did not happen: a system or file error occurred.\nCheck write permissions for the 'data' directory and rerun setup.\n"
+        )
     else:  # handling "failed" or any unhandled edge case
-        print("Admin creation did not happen: a system or file error occurred.\nCheck write permissions for the 'data' directory and rerun setup.\n")
+        print(
+            "Admin creation did not happen: a system or file error occurred.\nCheck write permissions for the 'data' directory and rerun setup.\n"
+        )
 
 
 if __name__ == "__main__":
